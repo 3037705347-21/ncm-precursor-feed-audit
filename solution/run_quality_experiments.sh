@@ -43,15 +43,18 @@ run_case() {
     reward="$(cat "$logs/verifier/reward.txt")"
     printf 'reward=%s\n' "$reward"
     printf 'summary='
-    python3 - "$logs/verifier/ctrf.json" <<'PY'
-import json
+    python3 - "$logs/verifier/junit.xml" <<'PY'
 import sys
+import xml.etree.ElementTree as ElementTree
 
-with open(sys.argv[1], encoding="utf-8") as handle:
-    summary = json.load(handle)["results"]["summary"]
+root = ElementTree.parse(sys.argv[1]).getroot()
+cases = list(root.iter("testcase"))
+failed = sum(
+    any(child.tag in {"failure", "error", "skipped"} for child in case)
+    for case in cases
+)
 print(
-    f"tests={summary['tests']} passed={summary['passed']} "
-    f"failed={summary['failed']}"
+    f"tests={len(cases)} passed={len(cases) - failed} failed={failed}"
 )
 PY
   } >"$evidence_dir/$name.log" 2>&1

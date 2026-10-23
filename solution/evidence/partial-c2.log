@@ -1,4 +1,4 @@
-$ docker run --rm -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-c2.uo3iXU:/workspace -v /Users/zhangchengcheng/harbor/ncm-precursor-feed-audit/tests:/tests:ro -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-logs-partial-c2.w8593o:/logs harbor-ncm-feed-quality:60553 bash /tests/test.sh
+$ docker run --rm -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-c2.o3rdNg:/workspace -v /Users/zhangchengcheng/harbor/ncm-precursor-feed-audit/tests:/tests:ro -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-logs-partial-c2.S6VmLw:/logs harbor-ncm-feed-quality:65088 bash /tests/test.sh
 Collecting iniconfig==2.3.1 (from -r /tests/requirements.txt (line 2))
   Downloading iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
 Collecting packaging==26.3 (from -r /tests/requirements.txt (line 3))
@@ -7,7 +7,7 @@ Collecting pluggy==1.7.0 (from -r /tests/requirements.txt (line 4))
   Downloading pluggy-1.7.0-py3-none-any.whl (27 kB)
 Collecting pygments==2.21.0 (from -r /tests/requirements.txt (line 5))
   Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 322.3 kB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 1.1 MB/s eta 0:00:00
 Collecting pytest==8.4.1 (from -r /tests/requirements.txt (line 6))
   Downloading pytest-8.4.1-py3-none-any.whl (365 kB)
 Collecting pytest-json-ctrf==0.3.5 (from -r /tests/requirements.txt (line 7))
@@ -450,7 +450,7 @@ _____________________________ test_e2e_demo_report _____________________________
 E           AssertionError: error: blend requires a negative fraction for recycle
 E             
 E           assert 1 == 0
-E            +  where 1 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/workspace/data/stocks.csv', '/workspace/...tmp/tmpteads_kz/plan.json'], returncode=1, stdout='', stderr='error: blend requires a negative fraction for recycle\n').returncode
+E            +  where 1 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/workspace/data/stocks.csv', '/workspace/...tmp/tmpkh2198_7/plan.json'], returncode=1, stdout='', stderr='error: blend requires a negative fraction for recycle\n').returncode
 
 /tests/test_outputs.py:1041: AssertionError
 __________________________ test_e2e_reordered_columns __________________________
@@ -470,19 +470,20 @@ __________________________ test_e2e_reordered_columns __________________________
 E           AssertionError: error: blend requires a negative fraction for recycle
 E             
 E           assert 1 == 0
-E            +  where 1 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/tmp/tmpdknpkqhv/stocks.csv', '/workspace...tmp/tmpdknpkqhv/plan.json'], returncode=1, stdout='', stderr='error: blend requires a negative fraction for recycle\n').returncode
+E            +  where 1 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/tmp/tmpt4m3uulq/stocks.csv', '/workspace...tmp/tmpt4m3uulq/plan.json'], returncode=1, stdout='', stderr='error: blend requires a negative fraction for recycle\n').returncode
 
 /tests/test_outputs.py:1154: AssertionError
 =============================== warnings summary ===============================
 ../home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:475
-  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 30] Read-only file system: '/tests/pytest-cache-files-j6701kvi'
+  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 30] Read-only file system: '/tests/pytest-cache-files-m727wpsg'
     config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
 
 ../home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:429
-  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 30] Read-only file system: '/tests/pytest-cache-files-yfi_tyrr'
+  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 30] Read-only file system: '/tests/pytest-cache-files-ccil7z_l'
     config.cache.set("cache/lastfailed", self.lastfailed)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+----------------- generated xml file: /logs/verifier/junit.xml -----------------
 =========================== short test summary info ============================
 FAILED ../tests/test_outputs.py::test_c1_dilution_and_molarity - assert 0.003...
 FAILED ../tests/test_outputs.py::test_c1_cobalt_and_manganese_masses - assert...
@@ -509,6 +510,6 @@ FAILED ../tests/test_outputs.py::test_c9_stage_profiles_satisfy_final_target
 FAILED ../tests/test_outputs.py::test_c9_rejects_unreachable_budget_and_bad_stage_limit
 FAILED ../tests/test_outputs.py::test_e2e_demo_report - AssertionError: error...
 FAILED ../tests/test_outputs.py::test_e2e_reordered_columns - AssertionError:...
-25 failed, 14 passed, 2 warnings in 1.04s
+25 failed, 14 passed, 2 warnings in 0.96s
 reward=0.140000
 summary=tests=39 passed=14 failed=25

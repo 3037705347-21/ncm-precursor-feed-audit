@@ -2,7 +2,7 @@
 set -u
 
 reward_file=/logs/verifier/reward.txt
-ctrf_file=/logs/verifier/ctrf.json
+JUNIT_FILE=/logs/verifier/junit.xml
 mkdir -p /logs/verifier
 
 write_reward_zero() {
@@ -23,14 +23,20 @@ if ! python -m pip install --user --no-cache-dir --disable-pip-version-check \
 fi
 
 cd /workspace
-timeout 240s python -m pytest --ctrf "$ctrf_file" /tests/test_outputs.py -q
+timeout 240s python -m pytest --junitxml "$JUNIT_FILE" /tests/test_outputs.py -q
 
-python3 - "$ctrf_file" "$reward_file" <<'PY'
-import json
+if ! test -s "$JUNIT_FILE"; then
+  printf 'INCOMPLETE: structured run report was not produced\n' >&2
+  write_reward_zero
+  exit 0
+fi
+
+python3 - "$JUNIT_FILE" "$reward_file" <<'PY'
 import os
 import sys
+import xml.etree.ElementTree as ElementTree
 
-ctrf_path, reward_path = sys.argv[1:]
+junit_path, reward_path = sys.argv[1:]
 groups = {
     "C1": (0.09, "test_c1_"),
     "C2": (0.14, "test_c2_"),
@@ -44,26 +50,29 @@ groups = {
     "E2E": (0.10, "test_e2e_"),
 }
 try:
-    with open(ctrf_path, encoding="utf-8") as handle:
-        tests = json.load(handle)["results"]["tests"]
-except (OSError, KeyError, TypeError, json.JSONDecodeError):
-    tests = []
+    root = ElementTree.parse(junit_path).getroot()
+except (OSError, ElementTree.ParseError):
+    root = None
 
 statuses = {}
-for test in tests:
-    name = str(test.get("name", "")).split("::")[-1]
-    statuses[name] = test.get("status") == "passed"
+if root is not None:
+    for case in root.iter("testcase"):
+        name = str(case.get("name", ""))
+        failed = any(
+            child.tag in {"failure", "error", "skipped"} for child in case
+        )
+        statuses[name] = not failed
 
-score = 0.0
+earned = 0.0
 for weight, prefix in groups.values():
     relevant = [passed for name, passed in statuses.items() if name.startswith(prefix)]
     if relevant and all(relevant):
-        score += weight
+        earned += weight
 
-score = min(1.0, max(0.0, score))
+earned = min(1.0, max(0.0, earned))
 os.chmod(reward_path, 0o644)
 with open(reward_path, "w", encoding="utf-8") as handle:
-    handle.write(f"{score:.6f}\n")
+    handle.write(f"{earned:.6f}\n")
 os.chmod(reward_path, 0o444)
 PY
 

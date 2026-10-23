@@ -1,4 +1,4 @@
-$ docker run --rm -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-malformed.Yjvacv:/workspace -v /Users/zhangchengcheng/harbor/ncm-precursor-feed-audit/tests:/tests:ro -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-logs-bypass-malformed.CqFVWi:/logs harbor-ncm-feed-quality:60553 bash /tests/test.sh
+$ docker run --rm -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-malformed.CEfPAn:/workspace -v /Users/zhangchengcheng/harbor/ncm-precursor-feed-audit/tests:/tests:ro -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-logs-bypass-malformed.me0vkB:/logs harbor-ncm-feed-quality:65088 bash /tests/test.sh
 Collecting iniconfig==2.3.1 (from -r /tests/requirements.txt (line 2))
   Downloading iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
 Collecting packaging==26.3 (from -r /tests/requirements.txt (line 3))
@@ -7,7 +7,7 @@ Collecting pluggy==1.7.0 (from -r /tests/requirements.txt (line 4))
   Downloading pluggy-1.7.0-py3-none-any.whl (27 kB)
 Collecting pygments==2.21.0 (from -r /tests/requirements.txt (line 5))
   Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 895.3 kB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 141.6 kB/s eta 0:00:00
 Collecting pytest==8.4.1 (from -r /tests/requirements.txt (line 6))
   Downloading pytest-8.4.1-py3-none-any.whl (365 kB)
 Collecting pytest-json-ctrf==0.3.5 (from -r /tests/requirements.txt (line 7))
@@ -34,7 +34,7 @@ ______________________ test_c5_rejects_duplicate_streams _______________________
             completed = _run_cli(stocks_path, DATA / "campaign.json", output_path)
 >           assert completed.returncode != 0
 E           AssertionError: assert 0 != 0
-E            +  where 0 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/tmp/tmppamn7_9s/stocks.csv', '/workspace/data/campaign.json', '/tmp/tmppamn7_9s/plan.json'], returncode=0, stdout='', stderr='').returncode
+E            +  where 0 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/tmp/tmpapxa1nkc/stocks.csv', '/workspace/data/campaign.json', '/tmp/tmpapxa1nkc/plan.json'], returncode=0, stdout='', stderr='').returncode
 
 /tests/test_outputs.py:785: AssertionError
 ________________________ test_c5_rejects_missing_stream ________________________
@@ -50,7 +50,7 @@ ________________________ test_c5_rejects_missing_stream ________________________
             completed = _run_cli(stocks_path, DATA / "campaign.json", output_path)
 >           assert completed.returncode != 0
 E           AssertionError: assert 0 != 0
-E            +  where 0 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/tmp/tmp0lmbadxe/stocks.csv', '/workspace/data/campaign.json', '/tmp/tmp0lmbadxe/plan.json'], returncode=0, stdout='', stderr='').returncode
+E            +  where 0 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/tmp/tmp3mopv1ex/stocks.csv', '/workspace/data/campaign.json', '/tmp/tmp3mopv1ex/plan.json'], returncode=0, stdout='', stderr='').returncode
 
 /tests/test_outputs.py:798: AssertionError
 ______________________ test_c5_rejects_bad_stage_fraction ______________________
@@ -67,7 +67,7 @@ ______________________ test_c5_rejects_bad_stage_fraction ______________________
             completed = _run_cli(DATA / "stocks.csv", campaign_path, output_path)
 >           assert completed.returncode != 0
 E           AssertionError: assert 0 != 0
-E            +  where 0 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/workspace/data/stocks.csv', '/tmp/tmp1qx435zu/campaign.json', '/tmp/tmp1qx435zu/plan.json'], returncode=0, stdout='', stderr='').returncode
+E            +  where 0 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/workspace/data/stocks.csv', '/tmp/tmps0twuyaw/campaign.json', '/tmp/tmps0twuyaw/plan.json'], returncode=0, stdout='', stderr='').returncode
 
 /tests/test_outputs.py:818: AssertionError
 ________________ test_c5_cli_invalid_preserves_existing_output _________________
@@ -87,7 +87,7 @@ ________________ test_c5_cli_invalid_preserves_existing_output _________________
             completed = _run_cli(stocks_path, campaign_path, output_path)
 >           assert completed.returncode != 0
 E           AssertionError: assert 0 != 0
-E            +  where 0 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/tmp/tmptpy6b9tf/stocks.csv', '/tmp/tmptpy6b9tf/campaign.json', '/tmp/tmptpy6b9tf/plan.json'], returncode=0, stdout='', stderr='').returncode
+E            +  where 0 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/tmp/tmpd_622jae/stocks.csv', '/tmp/tmpd_622jae/campaign.json', '/tmp/tmpd_622jae/plan.json'], returncode=0, stdout='', stderr='').returncode
 
 /tests/test_outputs.py:835: AssertionError
 _____________________________ test_e2e_demo_report _____________________________
@@ -112,7 +112,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <json.decoder.JSONDecoder object at 0xffff90b987a0>, s = '{"batch_id":'
+self = <json.decoder.JSONDecoder object at 0xffff92966b10>, s = '{"batch_id":'
 idx = 0
 
     def raw_decode(self, s, idx=0):
@@ -158,7 +158,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <json.decoder.JSONDecoder object at 0xffff90b987a0>, s = '{"batch_id":'
+self = <json.decoder.JSONDecoder object at 0xffff92966b10>, s = '{"batch_id":'
 idx = 0
 
     def raw_decode(self, s, idx=0):
@@ -179,14 +179,15 @@ E           json.decoder.JSONDecodeError: Expecting value: line 1 column 13 (cha
 /usr/local/lib/python3.12/json/decoder.py:356: JSONDecodeError
 =============================== warnings summary ===============================
 ../home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:475
-  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 30] Read-only file system: '/tests/pytest-cache-files-135okuar'
+  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 30] Read-only file system: '/tests/pytest-cache-files-g5bhuy88'
     config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
 
 ../home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:429
-  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 30] Read-only file system: '/tests/pytest-cache-files-gkxnr7t5'
+  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 30] Read-only file system: '/tests/pytest-cache-files-tb6mq4kf'
     config.cache.set("cache/lastfailed", self.lastfailed)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+----------------- generated xml file: /logs/verifier/junit.xml -----------------
 =========================== short test summary info ============================
 FAILED ../tests/test_outputs.py::test_c5_rejects_duplicate_streams - Assertio...
 FAILED ../tests/test_outputs.py::test_c5_rejects_missing_stream - AssertionEr...
@@ -194,6 +195,6 @@ FAILED ../tests/test_outputs.py::test_c5_rejects_bad_stage_fraction - Asserti...
 FAILED ../tests/test_outputs.py::test_c5_cli_invalid_preserves_existing_output
 FAILED ../tests/test_outputs.py::test_e2e_demo_report - json.decoder.JSONDeco...
 FAILED ../tests/test_outputs.py::test_e2e_reordered_columns - json.decoder.JS...
-6 failed, 33 passed, 2 warnings in 0.62s
+6 failed, 33 passed, 2 warnings in 0.66s
 reward=0.840000
 summary=tests=39 passed=33 failed=6

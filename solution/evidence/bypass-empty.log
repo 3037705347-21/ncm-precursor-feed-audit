@@ -1,4 +1,4 @@
-$ docker run --rm -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-empty.s9SSy5:/workspace -v /Users/zhangchengcheng/harbor/ncm-precursor-feed-audit/tests:/tests:ro -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-logs-bypass-empty.iq0tYz:/logs harbor-ncm-feed-quality:60553 bash /tests/test.sh
+$ docker run --rm -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-empty.hVxrDS:/workspace -v /Users/zhangchengcheng/harbor/ncm-precursor-feed-audit/tests:/tests:ro -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-logs-bypass-empty.ad9NDm:/logs harbor-ncm-feed-quality:65088 bash /tests/test.sh
 Collecting iniconfig==2.3.1 (from -r /tests/requirements.txt (line 2))
   Downloading iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
 Collecting packaging==26.3 (from -r /tests/requirements.txt (line 3))
@@ -7,7 +7,7 @@ Collecting pluggy==1.7.0 (from -r /tests/requirements.txt (line 4))
   Downloading pluggy-1.7.0-py3-none-any.whl (27 kB)
 Collecting pygments==2.21.0 (from -r /tests/requirements.txt (line 5))
   Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 952.1 kB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 774.3 kB/s eta 0:00:00
 Collecting pytest==8.4.1 (from -r /tests/requirements.txt (line 6))
   Downloading pytest-8.4.1-py3-none-any.whl (365 kB)
 Collecting pytest-json-ctrf==0.3.5 (from -r /tests/requirements.txt (line 7))
@@ -34,7 +34,7 @@ ______________________ test_c5_rejects_duplicate_streams _______________________
             completed = _run_cli(stocks_path, DATA / "campaign.json", output_path)
 >           assert completed.returncode != 0
 E           AssertionError: assert 0 != 0
-E            +  where 0 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/tmp/tmpzqny7w91/stocks.csv', '/workspace/data/campaign.json', '/tmp/tmpzqny7w91/plan.json'], returncode=0, stdout='', stderr='').returncode
+E            +  where 0 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/tmp/tmpri4tbwc3/stocks.csv', '/workspace/data/campaign.json', '/tmp/tmpri4tbwc3/plan.json'], returncode=0, stdout='', stderr='').returncode
 
 /tests/test_outputs.py:785: AssertionError
 ________________________ test_c5_rejects_missing_stream ________________________
@@ -50,7 +50,7 @@ ________________________ test_c5_rejects_missing_stream ________________________
             completed = _run_cli(stocks_path, DATA / "campaign.json", output_path)
 >           assert completed.returncode != 0
 E           AssertionError: assert 0 != 0
-E            +  where 0 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/tmp/tmp6yc24hl3/stocks.csv', '/workspace/data/campaign.json', '/tmp/tmp6yc24hl3/plan.json'], returncode=0, stdout='', stderr='').returncode
+E            +  where 0 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/tmp/tmp0d3vongj/stocks.csv', '/workspace/data/campaign.json', '/tmp/tmp0d3vongj/plan.json'], returncode=0, stdout='', stderr='').returncode
 
 /tests/test_outputs.py:798: AssertionError
 ______________________ test_c5_rejects_bad_stage_fraction ______________________
@@ -67,7 +67,7 @@ ______________________ test_c5_rejects_bad_stage_fraction ______________________
             completed = _run_cli(DATA / "stocks.csv", campaign_path, output_path)
 >           assert completed.returncode != 0
 E           AssertionError: assert 0 != 0
-E            +  where 0 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/workspace/data/stocks.csv', '/tmp/tmp80afgs27/campaign.json', '/tmp/tmp80afgs27/plan.json'], returncode=0, stdout='', stderr='').returncode
+E            +  where 0 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/workspace/data/stocks.csv', '/tmp/tmpojox7wff/campaign.json', '/tmp/tmpojox7wff/plan.json'], returncode=0, stdout='', stderr='').returncode
 
 /tests/test_outputs.py:818: AssertionError
 ________________ test_c5_cli_invalid_preserves_existing_output _________________
@@ -87,7 +87,7 @@ ________________ test_c5_cli_invalid_preserves_existing_output _________________
             completed = _run_cli(stocks_path, campaign_path, output_path)
 >           assert completed.returncode != 0
 E           AssertionError: assert 0 != 0
-E            +  where 0 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/tmp/tmpgzz6_hn9/stocks.csv', '/tmp/tmpgzz6_hn9/campaign.json', '/tmp/tmpgzz6_hn9/plan.json'], returncode=0, stdout='', stderr='').returncode
+E            +  where 0 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/tmp/tmp13q194ee/stocks.csv', '/tmp/tmp13q194ee/campaign.json', '/tmp/tmp13q194ee/plan.json'], returncode=0, stdout='', stderr='').returncode
 
 /tests/test_outputs.py:835: AssertionError
 _____________________________ test_e2e_demo_report _____________________________
@@ -115,9 +115,9 @@ _____________________________ test_e2e_demo_report _____________________________
 E       AssertionError: assert set() == {'batch', 'ba...ization', ...}
 E         
 E         Extra items in the right set:
-E         'blend_fractions'
-E         'multistage_washing'
-E         'blend'
+E         'batch'
+E         'crystallization'
+E         'conditioning'
 E         'reaction'
 E         'batch_id'...
 E         
@@ -148,14 +148,15 @@ E       KeyError: 'blend'
 /tests/test_outputs.py:1156: KeyError
 =============================== warnings summary ===============================
 ../home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:475
-  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 30] Read-only file system: '/tests/pytest-cache-files-70gvbao6'
+  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 30] Read-only file system: '/tests/pytest-cache-files-j_6_7rkv'
     config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
 
 ../home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:429
-  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 30] Read-only file system: '/tests/pytest-cache-files-z855hep2'
+  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 30] Read-only file system: '/tests/pytest-cache-files-_8qf2qnt'
     config.cache.set("cache/lastfailed", self.lastfailed)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+----------------- generated xml file: /logs/verifier/junit.xml -----------------
 =========================== short test summary info ============================
 FAILED ../tests/test_outputs.py::test_c5_rejects_duplicate_streams - Assertio...
 FAILED ../tests/test_outputs.py::test_c5_rejects_missing_stream - AssertionEr...
@@ -163,6 +164,6 @@ FAILED ../tests/test_outputs.py::test_c5_rejects_bad_stage_fraction - Asserti...
 FAILED ../tests/test_outputs.py::test_c5_cli_invalid_preserves_existing_output
 FAILED ../tests/test_outputs.py::test_e2e_demo_report - AssertionError: asser...
 FAILED ../tests/test_outputs.py::test_e2e_reordered_columns - KeyError: 'blend'
-6 failed, 33 passed, 2 warnings in 0.63s
+6 failed, 33 passed, 2 warnings in 0.83s
 reward=0.840000
 summary=tests=39 passed=33 failed=6

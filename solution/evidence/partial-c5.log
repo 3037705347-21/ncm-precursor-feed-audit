@@ -1,4 +1,5 @@
-$ docker run --rm -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-c5.jaODza:/workspace -v /Users/zhangchengcheng/harbor/ncm-precursor-feed-audit/tests:/tests:ro -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-logs-partial-c5.I7SwOn:/logs harbor-ncm-feed-quality:60553 bash /tests/test.sh
+$ docker run --rm -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-c5.QOx0mO:/workspace -v /Users/zhangchengcheng/harbor/ncm-precursor-feed-audit/tests:/tests:ro -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-logs-partial-c5.iM0BLF:/logs harbor-ncm-feed-quality:65088 bash /tests/test.sh
+WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)'))': /simple/iniconfig/
 Collecting iniconfig==2.3.1 (from -r /tests/requirements.txt (line 2))
   Downloading iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
 Collecting packaging==26.3 (from -r /tests/requirements.txt (line 3))
@@ -7,7 +8,7 @@ Collecting pluggy==1.7.0 (from -r /tests/requirements.txt (line 4))
   Downloading pluggy-1.7.0-py3-none-any.whl (27 kB)
 Collecting pygments==2.21.0 (from -r /tests/requirements.txt (line 5))
   Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 270.0 kB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 1.0 MB/s eta 0:00:00
 Collecting pytest==8.4.1 (from -r /tests/requirements.txt (line 6))
   Downloading pytest-8.4.1-py3-none-any.whl (365 kB)
 Collecting pytest-json-ctrf==0.3.5 (from -r /tests/requirements.txt (line 7))
@@ -598,14 +599,15 @@ E         Expected: 3.901734648713315 ± 3.9e-10
 /tests/test_outputs.py:1156: AssertionError
 =============================== warnings summary ===============================
 ../home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:475
-  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 30] Read-only file system: '/tests/pytest-cache-files-0vvbm9q7'
+  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 30] Read-only file system: '/tests/pytest-cache-files-96oz3iln'
     config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
 
 ../home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:429
-  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 30] Read-only file system: '/tests/pytest-cache-files-jvq32dcp'
+  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 30] Read-only file system: '/tests/pytest-cache-files-1ab1xum6'
     config.cache.set("cache/lastfailed", self.lastfailed)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+----------------- generated xml file: /logs/verifier/junit.xml -----------------
 =========================== short test summary info ============================
 FAILED ../tests/test_outputs.py::test_c1_dilution_and_molarity - assert 0.003...
 FAILED ../tests/test_outputs.py::test_c1_cobalt_and_manganese_masses - assert...
@@ -636,6 +638,6 @@ FAILED ../tests/test_outputs.py::test_c9_stage_profiles_satisfy_final_target
 FAILED ../tests/test_outputs.py::test_c9_rejects_unreachable_budget_and_bad_stage_limit
 FAILED ../tests/test_outputs.py::test_e2e_demo_report - assert 0.471035553041...
 FAILED ../tests/test_outputs.py::test_e2e_reordered_columns - assert 0.076687...
-29 failed, 10 passed, 2 warnings in 0.99s
+29 failed, 10 passed, 2 warnings in 1.06s
 reward=0.060000
 summary=tests=39 passed=10 failed=29

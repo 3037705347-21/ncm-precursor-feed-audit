@@ -1,6 +1,5 @@
-$ docker run --rm -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-c9.CI2Jqf:/workspace -v /Users/zhangchengcheng/harbor/ncm-precursor-feed-audit/tests:/tests:ro -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-logs-partial-c9.bl10sv:/logs harbor-ncm-feed-quality:60553 bash /tests/test.sh
+$ docker run --rm -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-c9.s4Adm6:/workspace -v /Users/zhangchengcheng/harbor/ncm-precursor-feed-audit/tests:/tests:ro -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-logs-partial-c9.awWEqW:/logs harbor-ncm-feed-quality:65088 bash /tests/test.sh
 Collecting iniconfig==2.3.1 (from -r /tests/requirements.txt (line 2))
-  WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)'))': /packages/56/43/4ca9e49d27a1fcf6bece6f6aec0ea46bb9112489b93d4b688fb415457bdb/iniconfig-2.3.1-py3-none-any.whl
   Downloading iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
 Collecting packaging==26.3 (from -r /tests/requirements.txt (line 3))
   Downloading packaging-26.3-py3-none-any.whl (129 kB)
@@ -8,7 +7,7 @@ Collecting pluggy==1.7.0 (from -r /tests/requirements.txt (line 4))
   Downloading pluggy-1.7.0-py3-none-any.whl (27 kB)
 Collecting pygments==2.21.0 (from -r /tests/requirements.txt (line 5))
   Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 1.1 MB/s eta 0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 936.9 kB/s eta 0:00:00
 Collecting pytest==8.4.1 (from -r /tests/requirements.txt (line 6))
   Downloading pytest-8.4.1-py3-none-any.whl (365 kB)
 Collecting pytest-json-ctrf==0.3.5 (from -r /tests/requirements.txt (line 7))
@@ -515,7 +514,7 @@ _____________________________ test_e2e_demo_report _____________________________
 E           AssertionError: error: solid and mother liquid masses must be positive
 E             
 E           assert 1 == 0
-E            +  where 1 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/workspace/data/stocks.csv', '/workspace/...mp/tmp09c4mugr/plan.json'], returncode=1, stdout='', stderr='error: solid and mother liquid masses must be positive\n').returncode
+E            +  where 1 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/workspace/data/stocks.csv', '/workspace/...mp/tmpt2ee36y8/plan.json'], returncode=1, stdout='', stderr='error: solid and mother liquid masses must be positive\n').returncode
 
 /tests/test_outputs.py:1041: AssertionError
 __________________________ test_e2e_reordered_columns __________________________
@@ -535,19 +534,20 @@ __________________________ test_e2e_reordered_columns __________________________
 E           AssertionError: error: solid and mother liquid masses must be positive
 E             
 E           assert 1 == 0
-E            +  where 1 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/tmp/tmp09shnvf2/stocks.csv', '/workspace...mp/tmp09shnvf2/plan.json'], returncode=1, stdout='', stderr='error: solid and mother liquid masses must be positive\n').returncode
+E            +  where 1 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/tmp/tmpit3suyn3/stocks.csv', '/workspace...mp/tmpit3suyn3/plan.json'], returncode=1, stdout='', stderr='error: solid and mother liquid masses must be positive\n').returncode
 
 /tests/test_outputs.py:1154: AssertionError
 =============================== warnings summary ===============================
 ../home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:475
-  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 30] Read-only file system: '/tests/pytest-cache-files-q1yiaj08'
+  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 30] Read-only file system: '/tests/pytest-cache-files-bl189cnw'
     config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
 
 ../home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:429
-  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 30] Read-only file system: '/tests/pytest-cache-files-h3rgiqsl'
+  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 30] Read-only file system: '/tests/pytest-cache-files-6js_18md'
     config.cache.set("cache/lastfailed", self.lastfailed)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+----------------- generated xml file: /logs/verifier/junit.xml -----------------
 =========================== short test summary info ============================
 FAILED ../tests/test_outputs.py::test_c1_dilution_and_molarity - assert 0.003...
 FAILED ../tests/test_outputs.py::test_c1_cobalt_and_manganese_masses - assert...
@@ -576,6 +576,6 @@ FAILED ../tests/test_outputs.py::test_c8_target_equal_to_feed_needs_no_wash
 FAILED ../tests/test_outputs.py::test_c8_rejects_invalid_wash_inputs - Failed...
 FAILED ../tests/test_outputs.py::test_e2e_demo_report - AssertionError: error...
 FAILED ../tests/test_outputs.py::test_e2e_reordered_columns - AssertionError:...
-27 failed, 12 passed, 2 warnings in 0.96s
+27 failed, 12 passed, 2 warnings in 0.98s
 reward=0.110000
 summary=tests=39 passed=12 failed=27
