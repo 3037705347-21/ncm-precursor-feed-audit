@@ -1,0 +1,28 @@
+{
+  "batch_id": "NCM811-20261023-A",
+  "target_ratio": {
+    "ni": 8.0,
+    "co": 1.0,
+    "mn": 1.0
+  },
+  "target_total_metal_mol_l": 1.48,
+  "batch_feed_m3": 12.0,
+  "stage_fractions": [
+    0.18,
+    0.52,
+    0.3
+  ],
+  "feeding_duration_min": 360.0,
+  "caustic_wt_fraction": 0.32,
+  "caustic_density_kg_l": 1.345,
+  "oh_excess_fraction": 0.015,
+  "max_iron_ppm": 12.0,
+  "max_na2so4_wt_fraction": 0.13,
+  "precipitate_density_kg_l": 2.1,
+  "working_volume_m3": 17.0,
+  "cold_na2so4_solubility_wt_fraction": 0.08,
+  "cake_moisture_kg_per_kg_solid": 0.3,
+  "cake_wash_target_sulfate_wt_fraction": 0.01,
+  "wash_water_budget_kg_per_kg_solid": 1.2,
+  "max_wash_stages": 5
+}

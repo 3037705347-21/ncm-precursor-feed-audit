@@ -1,0 +1,199 @@
+$ docker run --rm -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-malformed.Yjvacv:/workspace -v /Users/zhangchengcheng/harbor/ncm-precursor-feed-audit/tests:/tests:ro -v /var/folders/jz/2ksjlg25597g30hd7ltt3nd00000gn/T//ncm-feed-logs-bypass-malformed.CqFVWi:/logs harbor-ncm-feed-quality:60553 bash /tests/test.sh
+Collecting iniconfig==2.3.1 (from -r /tests/requirements.txt (line 2))
+  Downloading iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
+Collecting packaging==26.3 (from -r /tests/requirements.txt (line 3))
+  Downloading packaging-26.3-py3-none-any.whl (129 kB)
+Collecting pluggy==1.7.0 (from -r /tests/requirements.txt (line 4))
+  Downloading pluggy-1.7.0-py3-none-any.whl (27 kB)
+Collecting pygments==2.21.0 (from -r /tests/requirements.txt (line 5))
+  Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 895.3 kB/s eta 0:00:00
+Collecting pytest==8.4.1 (from -r /tests/requirements.txt (line 6))
+  Downloading pytest-8.4.1-py3-none-any.whl (365 kB)
+Collecting pytest-json-ctrf==0.3.5 (from -r /tests/requirements.txt (line 7))
+  Downloading pytest_json_ctrf-0.3.5-py3-none-any.whl (6.8 kB)
+Installing collected packages: pygments, pluggy, packaging, iniconfig, pytest, pytest-json-ctrf
+  WARNING: The script pygmentize is installed in '/home/worker/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+  WARNING: The scripts py.test and pytest are installed in '/home/worker/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+Successfully installed iniconfig-2.3.1 packaging-26.3 pluggy-1.7.0 pygments-2.21.0 pytest-8.4.1 pytest-json-ctrf-0.3.5
+....................FF.FF............FF                                  [100%]
+=================================== FAILURES ===================================
+______________________ test_c5_rejects_duplicate_streams _______________________
+
+    def test_c5_rejects_duplicate_streams():
+        """Reject duplicate stream IDs even when there are four rows."""
+        rows = _demo_rows()
+        rows[1]["stream_id"] = "recycle"
+        with tempfile.TemporaryDirectory() as directory:
+            directory_path = Path(directory)
+            stocks_path = directory_path / "stocks.csv"
+            output_path = directory_path / "plan.json"
+            _write_stocks(stocks_path, rows, list(rows[0]))
+            completed = _run_cli(stocks_path, DATA / "campaign.json", output_path)
+>           assert completed.returncode != 0
+E           AssertionError: assert 0 != 0
+E            +  where 0 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/tmp/tmppamn7_9s/stocks.csv', '/workspace/data/campaign.json', '/tmp/tmppamn7_9s/plan.json'], returncode=0, stdout='', stderr='').returncode
+
+/tests/test_outputs.py:785: AssertionError
+________________________ test_c5_rejects_missing_stream ________________________
+
+    def test_c5_rejects_missing_stream():
+        """Reject a stock table that omits one required stream."""
+        rows = _demo_rows()[:3]
+        with tempfile.TemporaryDirectory() as directory:
+            directory_path = Path(directory)
+            stocks_path = directory_path / "stocks.csv"
+            output_path = directory_path / "plan.json"
+            _write_stocks(stocks_path, rows, list(rows[0]))
+            completed = _run_cli(stocks_path, DATA / "campaign.json", output_path)
+>           assert completed.returncode != 0
+E           AssertionError: assert 0 != 0
+E            +  where 0 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/tmp/tmp0lmbadxe/stocks.csv', '/workspace/data/campaign.json', '/tmp/tmp0lmbadxe/plan.json'], returncode=0, stdout='', stderr='').returncode
+
+/tests/test_outputs.py:798: AssertionError
+______________________ test_c5_rejects_bad_stage_fraction ______________________
+
+    def test_c5_rejects_bad_stage_fraction():
+        """Reject stage fractions whose sum is not one."""
+        campaign = _demo_campaign()
+        campaign["stage_fractions"] = [0.2, 0.5, 0.4]
+        with tempfile.TemporaryDirectory() as directory:
+            directory_path = Path(directory)
+            campaign_path = directory_path / "campaign.json"
+            output_path = directory_path / "plan.json"
+            campaign_path.write_text(json.dumps(campaign), encoding="utf-8")
+            completed = _run_cli(DATA / "stocks.csv", campaign_path, output_path)
+>           assert completed.returncode != 0
+E           AssertionError: assert 0 != 0
+E            +  where 0 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/workspace/data/stocks.csv', '/tmp/tmp1qx435zu/campaign.json', '/tmp/tmp1qx435zu/plan.json'], returncode=0, stdout='', stderr='').returncode
+
+/tests/test_outputs.py:818: AssertionError
+________________ test_c5_cli_invalid_preserves_existing_output _________________
+
+    def test_c5_cli_invalid_preserves_existing_output():
+        """Leave an existing report untouched when a stock value is invalid."""
+        rows = _demo_rows()
+        rows[0]["ni_icp_mg_l"] = "-1.0"
+        with tempfile.TemporaryDirectory() as directory:
+            directory_path = Path(directory)
+            stocks_path = directory_path / "stocks.csv"
+            campaign_path = directory_path / "campaign.json"
+            output_path = directory_path / "plan.json"
+            _write_stocks(stocks_path, rows, list(rows[0]))
+            campaign_path.write_text(json.dumps(_demo_campaign()), encoding="utf-8")
+            output_path.write_text("existing plan\n", encoding="utf-8")
+            completed = _run_cli(stocks_path, campaign_path, output_path)
+>           assert completed.returncode != 0
+E           AssertionError: assert 0 != 0
+E            +  where 0 = CompletedProcess(args=['/usr/local/bin/python', '-m', 'precursor_feed.cli', '/tmp/tmptpy6b9tf/stocks.csv', '/tmp/tmptpy6b9tf/campaign.json', '/tmp/tmptpy6b9tf/plan.json'], returncode=0, stdout='', stderr='').returncode
+
+/tests/test_outputs.py:835: AssertionError
+_____________________________ test_e2e_demo_report _____________________________
+
+    def test_e2e_demo_report():
+        """Generate and independently check the complete bundled report."""
+        expected = _reference_report(_demo_rows(), _demo_campaign())
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "plan.json"
+            completed = _run_cli(DATA / "stocks.csv", DATA / "campaign.json", output)
+            assert completed.returncode == 0, completed.stderr
+>           actual = json.loads(output.read_text(encoding="utf-8"))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tests/test_outputs.py:1042: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.12/json/__init__.py:346: in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/json/decoder.py:338: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <json.decoder.JSONDecoder object at 0xffff90b987a0>, s = '{"batch_id":'
+idx = 0
+
+    def raw_decode(self, s, idx=0):
+        """Decode a JSON document from ``s`` (a ``str`` beginning with
+        a JSON document) and return a 2-tuple of the Python
+        representation and the index in ``s`` where the document ended.
+    
+        This can be used to decode a JSON document from a string that may
+        have extraneous data at the end.
+    
+        """
+        try:
+            obj, end = self.scan_once(s, idx)
+        except StopIteration as err:
+>           raise JSONDecodeError("Expecting value", s, err.value) from None
+E           json.decoder.JSONDecodeError: Expecting value: line 1 column 13 (char 12)
+
+/usr/local/lib/python3.12/json/decoder.py:356: JSONDecodeError
+__________________________ test_e2e_reordered_columns __________________________
+
+    def test_e2e_reordered_columns():
+        """Read a stock table by column name after reversing the column order."""
+        rows = _demo_rows()
+        expected = _reference_report(rows, _demo_campaign())
+        with tempfile.TemporaryDirectory() as directory:
+            directory_path = Path(directory)
+            stocks_path = directory_path / "stocks.csv"
+            output_path = directory_path / "plan.json"
+            columns = list(reversed(list(rows[0])))
+            _write_stocks(stocks_path, rows, columns)
+            completed = _run_cli(stocks_path, DATA / "campaign.json", output_path)
+            assert completed.returncode == 0, completed.stderr
+>           actual = json.loads(output_path.read_text(encoding="utf-8"))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tests/test_outputs.py:1155: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.12/json/__init__.py:346: in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/json/decoder.py:338: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <json.decoder.JSONDecoder object at 0xffff90b987a0>, s = '{"batch_id":'
+idx = 0
+
+    def raw_decode(self, s, idx=0):
+        """Decode a JSON document from ``s`` (a ``str`` beginning with
+        a JSON document) and return a 2-tuple of the Python
+        representation and the index in ``s`` where the document ended.
+    
+        This can be used to decode a JSON document from a string that may
+        have extraneous data at the end.
+    
+        """
+        try:
+            obj, end = self.scan_once(s, idx)
+        except StopIteration as err:
+>           raise JSONDecodeError("Expecting value", s, err.value) from None
+E           json.decoder.JSONDecodeError: Expecting value: line 1 column 13 (char 12)
+
+/usr/local/lib/python3.12/json/decoder.py:356: JSONDecodeError
+=============================== warnings summary ===============================
+../home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:475
+  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/nodeids: [Errno 30] Read-only file system: '/tests/pytest-cache-files-135okuar'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+../home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:429
+  /home/worker/.local/lib/python3.12/site-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /tests/.pytest_cache/v/cache/lastfailed: [Errno 30] Read-only file system: '/tests/pytest-cache-files-gkxnr7t5'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../tests/test_outputs.py::test_c5_rejects_duplicate_streams - Assertio...
+FAILED ../tests/test_outputs.py::test_c5_rejects_missing_stream - AssertionEr...
+FAILED ../tests/test_outputs.py::test_c5_rejects_bad_stage_fraction - Asserti...
+FAILED ../tests/test_outputs.py::test_c5_cli_invalid_preserves_existing_output
+FAILED ../tests/test_outputs.py::test_e2e_demo_report - json.decoder.JSONDeco...
+FAILED ../tests/test_outputs.py::test_e2e_reordered_columns - json.decoder.JS...
+6 failed, 33 passed, 2 warnings in 0.62s
+reward=0.840000
+summary=tests=39 passed=33 failed=6

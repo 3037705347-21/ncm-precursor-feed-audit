@@ -1,0 +1,27 @@
+schema_version = "1.3"
+
+[task]
+name = "local/ncm-precursor-feed-audit"
+description = "Reconcile four sulfate feed streams into an NCM 8:1:1 precursor batch and reaction material sheet."
+authors = [{ name = "zhangchengcheng" }]
+keywords = ["NCM precursor", "ICP dilution", "co-precipitation", "sodium hydroxide", "sulfate saturation"]
+
+[agent]
+timeout_sec = 3600
+
+[environment]
+build_timeout_sec = 900
+cpus = 1
+memory_mb = 2048
+storage_mb = 4096
+gpus = 0
+allow_internet = true
+
+[verifier]
+timeout_sec = 300
+
+[metadata]
+difficulty = "expert"
+category = "D.7 化学与材料 (Chemistry)"
+tags = ["Python", "ICP", "共沉淀", "物料衡算", "化学计量"]
+expert_time_estimate = "4h"

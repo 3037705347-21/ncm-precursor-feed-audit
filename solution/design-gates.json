@@ -1,0 +1,598 @@
+{
+  "name": "ncm-precursor-feed-audit",
+  "category": "D.7 化学与材料 (Chemistry)",
+  "scene": "三元正极前驱体共沉淀车间在换型前复核四股硫酸盐液流，按NCM 8:1:1目标生成可执行的混配、分段进料和碱液物料单",
+  "core_task": "读取四股液流的ICP稀释读数与批次参数，独立换算出各金属摩尔浓度，求解满足目标比例和总金属浓度的四元混合分数，再计算批次体积、质量、三阶段流量以及氢氧化钠、氢氧化物固体和硫酸钠副产物衡算",
+  "data_provenance": {
+    "kind": "generated",
+    "source": "以四股模拟硫酸盐液流的Ni/Co/Mn/Fe目标浓度为基础，对稀释后的ICP读数施加固定种子的正负0.35%扰动并按0.1 mg/L取整；液流密度、游离酸和目标批次参数为显式设定的业务模型值，生成规则保存在solution/generate_data.py，随包文件明确标注为模拟记录",
+    "seed": 20261023
+  },
+  "answer_verification": "测试内用独立公式从ICP读数、取样体积和定容体积复算金属摩尔浓度；再按四个流股的金属矩阵和高斯消元结果核对8:1:1目标；批次层按体积分数、密度和阶段比例复算体积、质量与流量；反应层分别以2 mol OH/mol金属、游离酸当量、过量系数、氢氧化物摩尔质量和Na2SO4摩尔质量独立复算三项产物；随后从液相质量和硫酸钠上限反算补水、核对含固工作体积，以十水硫酸钠摩尔质量比联立结晶带走的水和无水硫酸钠，按两级逆流持液衡算反求洗水和回收率，再对固定洗水预算逐级求解三对角稳态方程并搜索最少级数",
+  "environment": {
+    "base_image": "python:3.12.8-slim-bookworm@sha256:2199a62885a12290dc9c5be3ca0681d367576ab7bf037da120e564723292a2f0",
+    "dependencies_locked": true,
+    "allow_internet": true,
+    "network_reason": "业务程序只用Python标准库；验证依赖由带哈希清单在测试阶段安装；镜像内固定版Codex需要经宿主机本地代理连接模型，因此保留运行阶段的联网开关",
+    "architectures": [
+      "amd64",
+      "arm64"
+    ]
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "statement": "将稀释后的ICP读数按最终体积与取样体积之比换回原液浓度，并以指定原子量换算Ni、Co、Mn摩尔浓度及Fe质量浓度",
+      "observable": "四股液流的归一化字段；直接计算函数的稀释校正、1:1定容和非法取样体积拒收",
+      "expected_basis": "c_original=c_reading*final_volume/sample_volume；金属摩尔浓度=c_original(mg/L)/(1000*atomic_mass)",
+      "test_ids": [
+        "T01",
+        "T02",
+        "T03",
+        "T04",
+        "T05"
+      ]
+    },
+    {
+      "id": "R2",
+      "statement": "联立四个液流的Ni、Co、Mn贡献与体积分数归一化方程，求出满足目标比例和目标总金属摩尔浓度的唯一混合方案，并计算混合液Fe质量分数",
+      "observable": "四元分数、混合金属摩尔浓度、归一化比例与Fe ppm；负分数、奇异矩阵和非法目标被拒绝",
+      "expected_basis": "四个方程分别为Ni/Co/Mn目标摩尔浓度和分数和为1；Fe ppm=sum(f_i*Fe_i)/sum(f_i*rho_i)，其中各浓度均已做稀释校正",
+      "test_ids": [
+        "T06",
+        "T07",
+        "T08",
+        "T09",
+        "T10"
+      ]
+    },
+    {
+      "id": "R3",
+      "statement": "按批次总体积、混合分数和密度生成各液流体积与商品液质量，并按三阶段比例和总进料时长计算每阶段的体积和体积流量",
+      "observable": "total_metal_mol、free_acid_mol、metal_moles、stock_volume_l、stock_mass_kg以及三个阶段对象；非正批次体积或阶段比例不合一被拒绝",
+      "expected_basis": "V_i=f_i*V_batch；m_i=V_i*rho_i；阶段体积为批次体积乘阶段分数，阶段流量为阶段体积除以时长",
+      "test_ids": [
+        "T11",
+        "T12",
+        "T13",
+        "T14",
+        "T15"
+      ]
+    },
+    {
+      "id": "R4",
+      "statement": "按金属沉淀和游离酸中和计算氢氧化钠需求与过量，并计算氢氧化物固体及硫酸钠副产物质量",
+      "observable": "纯碱摩尔数、商业碱液质量与体积、氢氧化物固体千克数和硫酸钠千克数；非正碱液浓度或密度被拒绝",
+      "expected_basis": "nOH=2*n_metal+n_H+后乘1+过量系数；nMSO4=n_metal，nH2SO4=n_H+/2；固体按Ni(OH)2、Co(OH)2、Mn(OH)2的化学计量生成，Na2SO4摩尔数为n_metal+n_H+/2",
+      "test_ids": [
+        "T16",
+        "T17",
+        "T18",
+        "T19",
+        "T20"
+      ]
+    },
+    {
+      "id": "R5",
+      "statement": "严格校验四股液流、批次参数、阶段比例和目标Fe限值，并在任一检查失败时不创建或覆盖目标文件",
+      "observable": "重复或缺失液流、超限Fe、阶段比例不合一和坏CSV均返回非零；已有输出文件字节不变",
+      "expected_basis": "CSV列名集合与固定四流ID必须匹配且仅四行；所有数值有限；批次目标为正；阶段分数三项之和为1",
+      "test_ids": [
+        "T21",
+        "T22",
+        "T23",
+        "T24",
+        "T25"
+      ]
+    },
+    {
+      "id": "R6",
+      "statement": "命令行读取随包CSV和批次JSON，按固定根结构生成完整JSON；允许列顺序变化，并通过临时文件原子替换成功结果",
+      "observable": "演示批次报告的完整字段、数值、比例与衡算；重排列顺序仍得到同一结果",
+      "expected_basis": "命令行只从已验证的两份输入生成报告，输出由测试内独立参考计算逐字段核对",
+      "test_ids": [
+        "T26",
+        "T27"
+      ]
+    },
+    {
+      "id": "R7",
+      "statement": "按反应后脱除氢氧化物固体的液相质量计算硫酸钠质量分数，必要时用后反应补水稀释到上限，并核对含固体体积的反应器工作容积",
+      "observable": "补水千克和升数、稀释前后液相质量、最终硫酸钠质量分数及含沉淀体积；容积超限或上限非法时拒绝",
+      "expected_basis": "液相基准质量=各液流商品质量之和+商业碱液质量-氢氧化物固体质量；补水质量=max(0,硫酸钠质量/上限-基准液相质量)，补水密度按1 kg/L；总体积包括进料、碱液、补水和按给定密度折算的固体体积",
+      "test_ids": [
+        "T28",
+        "T29",
+        "T30"
+      ]
+    },
+    {
+      "id": "R8",
+      "statement": "在低温硫酸钠溶解度约束下，按十水硫酸钠结晶同时移除硫酸钠和结晶水，求解结晶量与剩余液相组成",
+      "observable": "十水硫酸钠千克数、结晶带走的硫酸钠、剩余液相质量、剩余硫酸钠及其质量分数；未饱和时结晶量为零，非法冷端溶解度被拒绝",
+      "expected_basis": "Na2SO4·10H2O/Na2SO4摩尔质量比为322.19494/142.04214；设结晶带走的Na2SO4为x，则液相质量减少x*该比值，剩余硫酸钠为原量-x，并以低温溶解度为质量分数约束求解x",
+      "test_ids": [
+        "T31",
+        "T32",
+        "T33"
+      ]
+    },
+    {
+      "id": "R9",
+      "statement": "对含十水硫酸钠晶体的滤饼做两级逆流洗涤，按持液比和目标滤饼硫酸钠质量分数求最小洗水量、两段液相组成和硫酸钠回收率",
+      "observable": "洗水量、一级液相质量分数、最终滤饼硫酸钠、滤液硫酸钠和回收率；目标不低于进料时洗水为零，非法持液比或目标被拒绝",
+      "expected_basis": "一级入口液相为全部剩余母液L，每级滤饼持液量均为r*S，二级入口为清水且出口液相全部进入一级；逐级硫酸钠与液相质量衡算得到最终持液质量分数t，并解二次方程W^2+L*W-r*S*L*(c-t)/t=0取正根",
+      "test_ids": [
+        "T34",
+        "T35",
+        "T36"
+      ]
+    },
+    {
+      "id": "R10",
+      "statement": "在固定总洗水预算和最大级数下，对1至N级逆流洗涤逐个求解稳态衡算，选择达到滤饼目标的最少级数",
+      "observable": "最少级数、各级液相质量分数、最终滤饼硫酸钠和回收率；预算内无方案或最大级数非法时拒绝",
+      "expected_basis": "每一级滤饼持液量均为E且自由液流量为W；首级入口为全部母液L，末级入口为全部洗水W，中间级按相邻级液相建立三对角稳态方程，依次求解1至最大级数并取首个满足目标者",
+      "test_ids": [
+        "T37",
+        "T38",
+        "T39"
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "id": "T01",
+      "kind": "normal",
+      "requirement_ids": [
+        "R1"
+      ],
+      "expected": "100倍稀释的Ni读数正确换回原液摩尔浓度"
+    },
+    {
+      "id": "T02",
+      "kind": "normal",
+      "requirement_ids": [
+        "R1"
+      ],
+      "expected": "50倍稀释的Co与Mn读数分别按对应原子量换算"
+    },
+    {
+      "id": "T03",
+      "kind": "boundary",
+      "requirement_ids": [
+        "R1"
+      ],
+      "expected": "最终体积等于取样体积时不做额外倍数放大"
+    },
+    {
+      "id": "T04",
+      "kind": "error",
+      "requirement_ids": [
+        "R1"
+      ],
+      "expected": "零或负取样体积被拒绝"
+    },
+    {
+      "id": "T05",
+      "kind": "normal",
+      "requirement_ids": [
+        "R1"
+      ],
+      "expected": "Fe的稀释后质量浓度按同一倍数换算"
+    },
+    {
+      "id": "T06",
+      "kind": "normal",
+      "requirement_ids": [
+        "R2"
+      ],
+      "expected": "演示四股液流得到唯一的非负混合分数"
+    },
+    {
+      "id": "T07",
+      "kind": "combination",
+      "requirement_ids": [
+        "R2"
+      ],
+      "expected": "混合后的Ni、Co、Mn摩尔浓度等于8:1:1目标"
+    },
+    {
+      "id": "T08",
+      "kind": "normal",
+      "requirement_ids": [
+        "R2"
+      ],
+      "expected": "Fe ppm按分数加权浓度除以分数加权密度得到"
+    },
+    {
+      "id": "T09",
+      "kind": "error",
+      "requirement_ids": [
+        "R2"
+      ],
+      "expected": "线性解出现负分数时判定该批不可达"
+    },
+    {
+      "id": "T10",
+      "kind": "error",
+      "requirement_ids": [
+        "R2"
+      ],
+      "expected": "金属贡献矩阵奇异时拒绝求解"
+    },
+    {
+      "id": "T11",
+      "kind": "normal",
+      "requirement_ids": [
+        "R3"
+      ],
+      "expected": "各液流体积等于批次体积乘对应混合分数"
+    },
+    {
+      "id": "T12",
+      "kind": "normal",
+      "requirement_ids": [
+        "R3"
+      ],
+      "expected": "各液流商品质量等于体积乘该液流密度"
+    },
+    {
+      "id": "T13",
+      "kind": "combination",
+      "requirement_ids": [
+        "R3"
+      ],
+      "expected": "三阶段体积比例与阶段分数一致且总和等于批次体积"
+    },
+    {
+      "id": "T14",
+      "kind": "normal",
+      "requirement_ids": [
+        "R3"
+      ],
+      "expected": "阶段体积流量按该阶段时长换算为L/h"
+    },
+    {
+      "id": "T15",
+      "kind": "boundary",
+      "requirement_ids": [
+        "R3"
+      ],
+      "expected": "批次总金属摩尔数与游离酸摩尔数由混合浓度乘体积得到"
+    },
+    {
+      "id": "T16",
+      "kind": "normal",
+      "requirement_ids": [
+        "R4"
+      ],
+      "expected": "每种过渡金属生成氢氧化物消耗2 mol OH"
+    },
+    {
+      "id": "T17",
+      "kind": "combination",
+      "requirement_ids": [
+        "R4"
+      ],
+      "expected": "游离酸当量加入碱耗并乘1+过量系数"
+    },
+    {
+      "id": "T18",
+      "kind": "normal",
+      "requirement_ids": [
+        "R4"
+      ],
+      "expected": "三种氢氧化物固体按各自摩尔质量求和"
+    },
+    {
+      "id": "T19",
+      "kind": "combination",
+      "requirement_ids": [
+        "R4"
+      ],
+      "expected": "硫酸钠摩尔数等于金属摩尔数加游离酸当量的一半"
+    },
+    {
+      "id": "T20",
+      "kind": "error",
+      "requirement_ids": [
+        "R4"
+      ],
+      "expected": "非正碱液质量分数或密度被拒绝"
+    },
+    {
+      "id": "T21",
+      "kind": "error",
+      "requirement_ids": [
+        "R5"
+      ],
+      "expected": "重复液流ID被拒绝"
+    },
+    {
+      "id": "T22",
+      "kind": "error",
+      "requirement_ids": [
+        "R5"
+      ],
+      "expected": "缺少固定液流之一被拒绝"
+    },
+    {
+      "id": "T23",
+      "kind": "error",
+      "requirement_ids": [
+        "R5"
+      ],
+      "expected": "混合Fe ppm超过批次上限时拒绝生成物料单"
+    },
+    {
+      "id": "T24",
+      "kind": "error",
+      "requirement_ids": [
+        "R5"
+      ],
+      "expected": "阶段分数之和不等于1或含非正项时拒绝"
+    },
+    {
+      "id": "T25",
+      "kind": "error",
+      "requirement_ids": [
+        "R5"
+      ],
+      "expected": "坏输入下命令非零退出且旧输出内容保持不变"
+    },
+    {
+      "id": "T26",
+      "kind": "combination",
+      "requirement_ids": [
+        "R6"
+      ],
+      "expected": "随包模拟批次生成完整且可复算的报告"
+    },
+    {
+      "id": "T27",
+      "kind": "normal",
+      "requirement_ids": [
+        "R6"
+      ],
+      "expected": "CSV列顺序重排后仍按列名解析并得到同一结果"
+    },
+    {
+      "id": "T28",
+      "kind": "normal",
+      "requirement_ids": [
+        "R7"
+      ],
+      "expected": "未超限时补水为零且最终质量分数正确"
+    },
+    {
+      "id": "T29",
+      "kind": "combination",
+      "requirement_ids": [
+        "R7"
+      ],
+      "expected": "演示批次按液相质量补水到硫酸钠上限并计入固体体积"
+    },
+    {
+      "id": "T30",
+      "kind": "error",
+      "requirement_ids": [
+        "R7"
+      ],
+      "expected": "补水后总工作体积超过反应器容积时拒绝"
+    },
+    {
+      "id": "T31",
+      "kind": "normal",
+      "requirement_ids": [
+        "R8"
+      ],
+      "expected": "演示液相冷却后得到正确的十水硫酸钠结晶量"
+    },
+    {
+      "id": "T32",
+      "kind": "boundary",
+      "requirement_ids": [
+        "R8"
+      ],
+      "expected": "液相硫酸钠已不高于冷端溶解度时结晶量为零"
+    },
+    {
+      "id": "T33",
+      "kind": "error",
+      "requirement_ids": [
+        "R8"
+      ],
+      "expected": "冷端溶解度不在允许区间时拒绝"
+    },
+    {
+      "id": "T34",
+      "kind": "combination",
+      "requirement_ids": [
+        "R9"
+      ],
+      "expected": "演示滤饼两级逆流洗涤得到满足目标的最小洗水量和回收率"
+    },
+    {
+      "id": "T35",
+      "kind": "boundary",
+      "requirement_ids": [
+        "R9"
+      ],
+      "expected": "目标质量分数等于进料时洗水为零且液相组成不变"
+    },
+    {
+      "id": "T36",
+      "kind": "error",
+      "requirement_ids": [
+        "R9"
+      ],
+      "expected": "非正持液比或目标质量分数超出物理范围时拒绝"
+    },
+    {
+      "id": "T37",
+      "kind": "combination",
+      "requirement_ids": [
+        "R10"
+      ],
+      "expected": "演示洗水预算下选择3级逆流洗涤而不是1级或2级"
+    },
+    {
+      "id": "T38",
+      "kind": "combination",
+      "requirement_ids": [
+        "R10"
+      ],
+      "expected": "各级液相组成满足稳态衡算且最终滤饼达到目标"
+    },
+    {
+      "id": "T39",
+      "kind": "error",
+      "requirement_ids": [
+        "R10"
+      ],
+      "expected": "预算内最大级数仍达不到目标或最大级数非法时拒绝"
+    }
+  ],
+  "challenges": [
+    {
+      "id": "C1",
+      "description": "区分ICP读数是稀释液浓度并正确乘回原液，再把元素质量浓度换算为摩尔浓度",
+      "failure_mode": "漏乘定容/取样倍数或把mg/L直接当mol/L，导致所有液流浓度和后续配方一起偏低",
+      "fix_action": "先实现稀释倍率与原子量换算的测量模块，再用1:1定容和100倍稀释边界核对",
+      "requirement_ids": [
+        "R1"
+      ],
+      "test_ids": [
+        "T01",
+        "T02",
+        "T03",
+        "T04",
+        "T05"
+      ]
+    },
+    {
+      "id": "C2",
+      "description": "以四股液流的三个金属贡献和分数归一化构造4x4方程，求非负混合方案并保留杂质浓度信息",
+      "failure_mode": "直接按目标比例分配体积或用纯盐流近似循环液贡献，得到比例偏差或负分数仍继续配料",
+      "fix_action": "实现带部分主元的高斯消元和残差检查，对负分数与近奇异矩阵显式拒绝，再按加权密度求Fe ppm",
+      "requirement_ids": [
+        "R2"
+      ],
+      "test_ids": [
+        "T06",
+        "T07",
+        "T08",
+        "T09",
+        "T10"
+      ]
+    },
+    {
+      "id": "C3",
+      "description": "把混合体积分数展开成批次各流股的体积、质量、金属摩尔、游离酸摩尔和三阶段流量",
+      "failure_mode": "只给百分比而不换成立方米、升和千克，或把整批流量重复用于每个阶段",
+      "fix_action": "统一以升为内部体积单位，按批次体积乘混合分数和阶段分数展开，再用各流股密度和进料时长求质量与流量",
+      "requirement_ids": [
+        "R3"
+      ],
+      "test_ids": [
+        "T11",
+        "T12",
+        "T13",
+        "T14",
+        "T15"
+      ]
+    },
+    {
+      "id": "C4",
+      "description": "联立沉淀反应、游离酸中和、碱液规格以及氢氧化物和硫酸钠副产物计量",
+      "failure_mode": "只按2 mol OH/mol金属计算而忽略游离酸和过量，或把硫酸钠摩尔数直接等于金属摩尔数而漏掉酸根贡献",
+      "fix_action": "先求基础OH摩尔数，再加游离酸当量并按过量系数放大，分别按金属种类算氢氧化物质量、按硫酸根来源算Na2SO4",
+      "requirement_ids": [
+        "R4"
+      ],
+      "test_ids": [
+        "T16",
+        "T17",
+        "T18",
+        "T19",
+        "T20"
+      ]
+    },
+    {
+      "id": "C5",
+      "description": "对长表CSV和批次JSON做严格结构及数值校验，并保证失败路径绝不留下半成品",
+      "failure_mode": "用位置读列、放过重复流股或超限Fe，甚至在最终检查前就截断写了目标文件",
+      "fix_action": "按列名集合建立唯一ID映射，在所有计算和Fe限值检查通过后再用同目录临时文件原子替换输出",
+      "requirement_ids": [
+        "R5",
+        "R6"
+      ],
+      "test_ids": [
+        "T21",
+        "T22",
+        "T23",
+        "T24",
+        "T25",
+        "T26",
+        "T27"
+      ]
+    },
+    {
+      "id": "C6",
+      "description": "从反应后液相质量出发计算硫酸钠饱和风险，求最小补水量并核对含固体的反应器工作容积",
+      "failure_mode": "把进料与碱液直接相加而忘记扣除氢氧化物固体，或只按体积估稀释水，导致硫酸钠质量分数和容积判断错误",
+      "fix_action": "先由商品液质量、碱液质量和固体质量求反应后液相基准，再按硫酸钠质量分数上限反求补水，并把固体按密度折算进总体积检查",
+      "requirement_ids": [
+        "R7"
+      ],
+      "test_ids": [
+        "T28",
+        "T29",
+        "T30"
+      ]
+    },
+    {
+      "id": "C7",
+      "description": "把冷却析出的十水硫酸钠同时视为硫酸钠和结晶水的移除，在硫酸钠质量分数约束下求结晶量",
+      "failure_mode": "只扣硫酸钠而不扣结晶水，或把结晶水忽略为固定水量，导致剩余液相质量和硫酸钠质量分数偏差",
+      "fix_action": "用十水硫酸钠与硫酸钠的摩尔质量比建立含水结晶的物料衡算，解一元方程求被带走的硫酸钠质量，再回算晶体与剩余液相",
+      "requirement_ids": [
+        "R8"
+      ],
+      "test_ids": [
+        "T31",
+        "T32",
+        "T33"
+      ]
+    },
+    {
+      "id": "C8",
+      "description": "建立两级逆流洗涤的稳态液相与硫酸钠衡算，反算达到滤饼目标质量分数所需的最小洗水量",
+      "failure_mode": "把两级洗水当成互不串联的两次稀释，或用总液相平均浓度代替最终滤饼持液浓度",
+      "fix_action": "以每级恒定的持液量r*S建立二级到一级的逆流衡算，用最终目标质量分数反解洗水比，再回算各级组成、滤液带走量和回收率",
+      "requirement_ids": [
+        "R9"
+      ],
+      "test_ids": [
+        "T34",
+        "T35",
+        "T36"
+      ]
+    },
+    {
+      "id": "C9",
+      "description": "在固定洗水预算下逐级建立逆流稳态方程，并通过整数级数搜索选择满足滤饼目标的最少级数",
+      "failure_mode": "把固定总洗水按级数平均分配，或只比较两级结果而没有检查1级起点及更高相邻级耦合",
+      "fix_action": "对每个候选级数建立首级母液、末级洗水和中间三对角相邻级方程，求各级液相组成，取第一个满足目标的级数，并检查预算不可达",
+      "requirement_ids": [
+        "R10"
+      ],
+      "test_ids": [
+        "T37",
+        "T38",
+        "T39"
+      ]
+    }
+  ]
+}

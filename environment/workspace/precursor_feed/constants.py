@@ -1,0 +1,19 @@
+"""Atomic and formula masses used by the feed and reaction calculations."""
+
+NICKEL_G_PER_MOL = 58.6934
+COBALT_G_PER_MOL = 58.933194
+MANGANESE_G_PER_MOL = 54.938044
+IRON_G_PER_MOL = 55.845
+NICKEL_HYDROXIDE_G_PER_MOL = 92.70808
+COBALT_HYDROXIDE_G_PER_MOL = 92.947874
+MANGANESE_HYDROXIDE_G_PER_MOL = 88.952724
+SODIUM_HYDROXIDE_G_PER_MOL = 39.99711
+SODIUM_SULFATE_G_PER_MOL = 142.04214
+
+STREAM_IDS = ("recycle", "ni_sulfate", "co_sulfate", "mn_sulfate")
+METAL_KEYS = ("ni", "co", "mn")
+ATOMIC_MASSES = {
+    "ni": NICKEL_G_PER_MOL,
+    "co": COBALT_G_PER_MOL,
+    "mn": MANGANESE_G_PER_MOL,
+}

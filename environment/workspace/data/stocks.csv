@@ -1,0 +1,5 @@
+stream_id,ni_icp_mg_l,co_icp_mg_l,mn_icp_mg_l,iron_icp_mg_l,sample_ml,final_volume_ml,density_kg_l,free_acid_mmol_l
+recycle,219.6,28.1,26.0,0.10,1.0,100.0,1.246,18.0
+ni_sulfate,1898.2,5.0,1.6,0.10,2.0,100.0,1.360,12.0
+co_sulfate,3.0,1557.8,1.0,0.10,2.0,100.0,1.320,10.0
+mn_sulfate,2.0,2.4,1279.1,0.10,2.0,100.0,1.290,15.0
